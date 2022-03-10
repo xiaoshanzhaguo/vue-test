@@ -21,7 +21,7 @@
       <i class="el-icon-document"></i>
       <span slot="title">食品管理</span>
     </el-menu-item>
-    <el-menu-item index="/chart">
+    <el-menu-item index="/users/list">
       <i class="el-icon-setting"></i>
       <span slot="title">图表管理</span>
     </el-menu-item>

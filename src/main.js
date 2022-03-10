@@ -8,10 +8,16 @@ import {
   Menu,
   MenuItem,
   MenuItemGroup,
-  Submenu
+  Submenu,
+  Message,
+  Form,
+  FormItem,
+  Input,
+  Button
 } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import router from "./router";
+import http from './http'
 
 Vue.use(Header)
 Vue.use(Container)
@@ -21,8 +27,15 @@ Vue.use(Menu)
 Vue.use(MenuItem)
 Vue.use(MenuItemGroup)
 Vue.use(Submenu)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Input)
+Vue.use(Button)
 
 Vue.config.productionTip = false
+
+Vue.prototype.$message = Message
+Vue.prototype.$http = http
 
 //添加导航守卫， 一开始就进入home页面
 // router.beforeEach((to, from, next) => {
