@@ -45,11 +45,11 @@
       ></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="small"
-            @click="clickEdit(scope.row._id)"
+          <el-button type="primary" size="small" @click="clickEdit(scope.row)"
             >编辑</el-button
+          >
+          <el-button type="danger" size="small" @click="remove(scope.row)"
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -97,18 +97,42 @@ export default {
       this.items = res.data;
     },
     // 编辑用户
-    async clickEdit(val) {
-      const res = await this.$http.get(`users/${val}`);
+    async clickEdit(row) {
+      const res = await this.$http.get(`users/${row._id}`);
       this.model = res.data;
       this.dialogVisible = true;
       this.operateType = "edit";
-      this.rowId = val;
+      this.rowId = row._id;
     },
     // 添加用户
     clickAdd() {
       this.model = {};
       this.dialogVisible = true;
       this.operateType = "add";
+    },
+    // 删除用户  !!!
+    async remove(row) {
+      console.log(row);
+      this.$confirm(`是否要继续删除 "${row.username}"？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          const res = await this.$http.delete(`users/${row._id}`);
+          this.$message({
+            type: "success",
+            message: "删除成功！",
+          });
+          console.log(res);
+          this.fetchList();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
   created() {

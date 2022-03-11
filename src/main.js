@@ -44,7 +44,7 @@ Vue.use(TableColumn)
 Vue.config.productionTip = false
 
 Vue.prototype.$message = Message
-Vue.prototype.$confirm = MessageBox
+Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$http = http
 
 //添加导航守卫， 一开始就进入home页面
