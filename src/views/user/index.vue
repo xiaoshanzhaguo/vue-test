@@ -1,7 +1,11 @@
 <template>
   <div class="user">
-    <el-button type="primary" @click="dialogVisible = true">添加用户</el-button>
-    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="40%">
+    <el-button type="primary" @click="clickAdd">添加用户</el-button>
+    <el-dialog
+      :title="operateType === 'add' ? '添加用户' : '编辑用户'"
+      :visible.sync="dialogVisible"
+      width="40%"
+    >
       <el-form label-width="100px" @submit.native.prevent="save">
         <el-form-item label="用户名">
           <el-col :span="20">
@@ -27,7 +31,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-table :data="items"  stripe>
+    <el-table :data="items" stripe>
       <el-table-column prop="_id" label="ID" width="180"></el-table-column>
       <el-table-column
         prop="username"
@@ -39,6 +43,16 @@
         label="密码"
         width="180"
       ></el-table-column>
+      <el-table-column label="操作" fixed="right">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            size="small"
+            @click="clickEdit(scope.row._id)"
+            >编辑</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -52,12 +66,24 @@ export default {
       model: {},
       items: [],
       dialogVisible: false,
+      operateType: "add",
+      rowId: "",
     };
   },
   methods: {
+    // 保存用户数据
     async save() {
+      // 点击保存时，判断是添加还是编辑的保存
+      let res;
       console.log("save");
-      const res = await this.$http.post("users", this.model); // !!!!
+      if (this.operateType === "edit") {
+        res = await this.$http.put(`users/${this.rowId}`, this.model);
+        this.fetchList();
+      } else {
+        res = await this.$http.post("users", this.model); // !!!!
+        this.fetchList();
+      }
+      //   this.$router.push("/users/list");
       this.$message({
         type: "success",
         message: "保存成功",
@@ -65,13 +91,28 @@ export default {
       this.dialogVisible = false;
       console.log(res);
     },
-    async fetch() {
+    // 初始列表数据
+    async fetchList() {
       const res = await this.$http.get("users");
       this.items = res.data;
     },
+    // 编辑用户
+    async clickEdit(val) {
+      const res = await this.$http.get(`users/${val}`);
+      this.model = res.data;
+      this.dialogVisible = true;
+      this.operateType = "edit";
+      this.rowId = val;
+    },
+    // 添加用户
+    clickAdd() {
+      this.model = {};
+      this.dialogVisible = true;
+      this.operateType = "add";
+    },
   },
   created() {
-    this.fetch();
+    this.fetchList();
   },
 };
 </script>
