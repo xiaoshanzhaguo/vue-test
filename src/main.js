@@ -10,10 +10,15 @@ import {
   MenuItemGroup,
   Submenu,
   Message,
+  MessageBox,
   Form,
   FormItem,
   Input,
-  Button
+  Button,
+  Dialog,
+  Col,
+  Table,
+  TableColumn
 } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import router from "./router";
@@ -31,10 +36,15 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
 Vue.use(Button)
+Vue.use(Dialog)
+Vue.use(Col)
+Vue.use(Table)
+Vue.use(TableColumn)
 
 Vue.config.productionTip = false
 
 Vue.prototype.$message = Message
+Vue.prototype.$confirm = MessageBox
 Vue.prototype.$http = http
 
 //添加导航守卫， 一开始就进入home页面
