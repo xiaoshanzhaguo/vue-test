@@ -22,6 +22,7 @@ import {
   Row
 } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
+import './assets/css/iconfont.css'
 import router from "./router";
 import http from './http'
 

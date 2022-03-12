@@ -48,13 +48,20 @@
         prop="username"
         label="用户名"
         width="180"
+        align="center"
       ></el-table-column>
-      <el-table-column
-        prop="password"
-        label="密码"
-        width="180"
-      ></el-table-column>
-      <el-table-column label="操作" fixed="right">
+      <el-table-column prop="password" label="密码" width="180" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.password_d }}
+          <el-button
+            class="view"
+            type="text"
+            @click.native.prevent="view(scope.$index, scope.row)"
+            ><i :class="scope.row.icon"></i
+          ></el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="clickEdit(scope.row)"
             >编辑</el-button
@@ -80,6 +87,7 @@ export default {
       operateType: "add",
       rowId: "",
       searchName: "",
+      index_x: [], // 获取每一行的数据
     };
   },
   watch: {
@@ -164,6 +172,19 @@ export default {
       this.items = res.data;
       console.log(res);
     },
+    // 点击查看密码
+    view(index, row) {
+      console.log(row);
+      this.index_x = index;
+      var viewData = this.index_x;
+      if (this.items[viewData].password_d === "******") {
+        this.items[viewData].password_d = this.items[viewData].password;
+        this.items[viewData].icon = "el-icon-view";
+      } else {
+        this.items[viewData].password_d = "******";
+        this.items[viewData].icon = "iconfont icon-eye-none";
+      }
+    },
   },
   created() {
     this.fetchList();
@@ -185,5 +206,9 @@ export default {
       margin-left: 15px;
     }
   }
+}
+
+.view {
+  margin-left: 10px;
 }
 </style>
