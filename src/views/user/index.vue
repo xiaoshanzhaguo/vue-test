@@ -22,17 +22,23 @@
           <el-col :span="20">
             <el-input
               v-model="model.username"
-              placeholder="请输入账号"
+              placeholder="请输入用户名"
+              clearable
             ></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="密码">
           <el-col :span="20">
             <el-input
-              type="password"
               v-model="model.password"
               placeholder="请输入密码"
-            ></el-input>
+              :type="pwd"
+              clearable
+              @blur="Onblur"
+            >
+              <!-- !!!! input中加图标必须要有slot="suffix"属性，不然无法显示图标 -->
+              <i slot="suffix" :class="icon" @click="changePwd"></i>
+            </el-input>
           </el-col>
         </el-form-item>
         <el-form-item>
@@ -81,13 +87,15 @@ export default {
   name: "User",
   data() {
     return {
-      model: {},
-      items: [],
+      model: {}, // form数据
+      items: [], // table数据
       dialogVisible: false,
       operateType: "add",
-      rowId: "",
-      searchName: "",
+      rowId: "", // 当前行的id
+      searchName: "", // 搜索框数据
       index_x: [], // 获取每一行的数据
+      pwd: "password", // input输入框type类型
+      icon: "iconfont icon-eye-none", //  密码输入框右侧图标
     };
   },
   watch: {
@@ -131,12 +139,18 @@ export default {
       this.dialogVisible = true;
       this.operateType = "edit";
       this.rowId = row._id;
+
+      this.pwd = "password";
+      this.icon = "iconfont icon-eye-none";
     },
     // 添加用户
     clickAdd() {
       this.model = {};
       this.dialogVisible = true;
       this.operateType = "add";
+
+      this.pwd = "password";
+      this.icon = "iconfont icon-eye-none";
     },
     // 删除用户  !!!
     async remove(row) {
@@ -184,6 +198,26 @@ export default {
         this.items[viewData].password_d = "******";
         this.items[viewData].icon = "iconfont icon-eye-none";
       }
+    },
+    // 改变密码显示和隐藏的状态
+    changePwd() {
+      // 点击图标是显示或隐藏
+      if (this.pwd === "password") {
+        this.pwd = "text";
+        this.icon = "el-icon-view";
+        // 如果显示密码，则在500ms后让图标消失
+        setTimeout(() => {
+          this.icon = "";
+        }, 500);
+      } else {
+        this.pwd = "password";
+        this.icon = "iconfont icon-eye-none";
+      }
+    },
+    // 密码失焦事件
+    Onblur() {
+      this.pwd = "password";
+      this.icon = "iconfont icon-eye-none";
     },
   },
   created() {
