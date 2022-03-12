@@ -1,6 +1,6 @@
 <template>
   <el-menu
-    default-active="1-4-1"
+    :default-active="activePath"
     class="el-menu-vertical-demo"
     @open="handleOpen"
     router
@@ -42,7 +42,12 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
-    }
+    },
+  },
+  computed: {
+    activePath() {
+      return this.$route.path;
+    },
   },
 };
 </script>
