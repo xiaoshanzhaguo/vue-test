@@ -18,7 +18,8 @@ import {
   Dialog,
   Col,
   Table,
-  TableColumn
+  TableColumn,
+  Row
 } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import router from "./router";
@@ -40,6 +41,7 @@ Vue.use(Dialog)
 Vue.use(Col)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Row)
 
 Vue.config.productionTip = false
 

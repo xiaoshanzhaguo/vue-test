@@ -1,6 +1,17 @@
 <template>
   <div class="user">
-    <el-button type="primary" @click="clickAdd">添加用户</el-button>
+    <el-row class="top">
+      <el-button type="primary" @click="clickAdd">添加用户</el-button>
+      <el-col :span="7" class="topRight">
+        <el-input
+          v-model="searchName"
+          placeholder="请输入要查找的用户名"
+        ></el-input>
+        <el-button type="primary" class="searchButton" @click="search"
+          >搜索</el-button
+        >
+      </el-col>
+    </el-row>
     <el-dialog
       :title="operateType === 'add' ? '添加用户' : '编辑用户'"
       :visible.sync="dialogVisible"
@@ -31,8 +42,8 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-table :data="items" stripe>
-      <el-table-column prop="_id" label="ID" width="180"></el-table-column>
+    <el-table :data="items" stripe style="margin-top: 20px">
+      <!-- <el-table-column prop="_id" label="ID" width="180"></el-table-column> -->
       <el-table-column
         prop="username"
         label="用户名"
@@ -68,7 +79,16 @@ export default {
       dialogVisible: false,
       operateType: "add",
       rowId: "",
+      searchName: "",
     };
+  },
+  watch: {
+    searchName: {
+      handler(val) {
+        this.searchName = val;
+        this.search();
+      },
+    },
   },
   methods: {
     // 保存用户数据
@@ -134,6 +154,16 @@ export default {
           });
         });
     },
+    // 查找用户
+    async search() {
+      if (this.searchName === "") {
+        this.fetchList();
+        return;
+      }
+      const res = await this.$http.get(`user/${this.searchName}`);
+      this.items = res.data;
+      console.log(res);
+    },
   },
   created() {
     this.fetchList();
@@ -142,4 +172,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.top {
+  display: flex;
+  justify-content: space-between; // ！！！往两边靠
+
+  .topRight {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+
+    .searchButton {
+      margin-left: 15px;
+    }
+  }
+}
 </style>
