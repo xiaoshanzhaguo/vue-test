@@ -19,12 +19,16 @@ import {
   Col,
   Table,
   TableColumn,
-  Row
+  Row,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu
 } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/iconfont.css'
 import router from "./router";
 import http from './http'
+import store from './store'
 
 Vue.use(Header)
 Vue.use(Container)
@@ -43,6 +47,9 @@ Vue.use(Col)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Row)
+Vue.use(Dropdown)
+Vue.use(DropdownItem)
+Vue.use(DropdownMenu)
 
 Vue.config.productionTip = false
 
@@ -59,6 +66,7 @@ Vue.prototype.$http = http
 // })
 
 new Vue({
+  store,
   router,
   render: h => h(App),
 }).$mount('#app')

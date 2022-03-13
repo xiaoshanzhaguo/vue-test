@@ -5,7 +5,7 @@
       <el-col :span="7" class="topRight">
         <el-input
           v-model="searchName"
-          placeholder="请输入要查找的用户名"
+          placeholder="请输入要查询的用户名"
         ></el-input>
         <el-button type="primary" class="searchButton" @click="search"
           >搜索</el-button
@@ -48,7 +48,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-table :data="items" stripe style="margin-top: 20px">
+    <el-table :data="items" stripe style="margin-top: 20px; height: 90%">
       <!-- <el-table-column prop="_id" label="ID" width="180"></el-table-column> -->
       <el-table-column
         prop="username"
@@ -69,7 +69,7 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="clickEdit(scope.row)"
+          <el-button type="plain" size="small" @click="clickEdit(scope.row)"
             >编辑</el-button
           >
           <el-button type="danger" size="small" @click="remove(scope.row)"
@@ -242,7 +242,11 @@ export default {
   }
 }
 
-.view {
-  margin-left: 10px;
+.el-table {
+  height: calc(100% - 62px);
+  background-color: #fff;
+  .view {
+    margin-left: 10px;
+  }
 }
 </style>

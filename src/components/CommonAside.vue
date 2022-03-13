@@ -7,7 +7,9 @@
     @close="handleClose"
     :collapse="isCollapse"
   >
-    <h3 style="text-align: center">测试系统</h3>
+    <h3 style="text-align: center; color: #c0c0c0">
+      {{ isCollapse ? "后台" : "后台管理系统" }}
+    </h3>
     <!-- index：唯一标志 -->
     <el-menu-item index="/home">
       <i class="el-icon-location"></i>
@@ -32,9 +34,7 @@
 export default {
   name: "CommonAside",
   data() {
-    return {
-      isCollapse: false,
-    };
+    return {};
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -48,6 +48,10 @@ export default {
     activePath() {
       return this.$route.path;
     },
+    isCollapse() {
+      // ！！！ 下面别少了一层.tab。这里获取到的isColllapse就是从vuex中拿到的isCollapse
+      return this.$store.state.tab.isCollapse;
+    },
   },
 };
 </script>
@@ -56,5 +60,9 @@ export default {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
+}
+
+.el-menu {
+  background-color: #fff;
 }
 </style>
