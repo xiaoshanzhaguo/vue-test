@@ -12,19 +12,19 @@
     </h3>
     <!-- index：唯一标志 -->
     <el-menu-item index="/home">
-      <i class="el-icon-location"></i>
+      <i class="el-icon-s-home"></i>
       <span slot="title">首页</span>
     </el-menu-item>
     <el-menu-item index="/user">
-      <i class="el-icon-menu"></i>
+      <i class="el-icon-user"></i>
       <span slot="title">用户管理</span>
     </el-menu-item>
     <el-menu-item index="/food">
-      <i class="el-icon-document"></i>
+      <i class="el-icon-food"></i>
       <span slot="title">食品管理</span>
     </el-menu-item>
     <el-menu-item index="/chart">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-pie-chart"></i>
       <span slot="title">图表管理</span>
     </el-menu-item>
   </el-menu>
