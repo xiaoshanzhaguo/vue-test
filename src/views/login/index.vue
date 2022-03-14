@@ -1,20 +1,40 @@
 <template>
   <div class="login">
-    <el-form label-width="100px" class="login-container">
+    <!-- ！！！ 注意form表单绑定的数据(但是这个可以暂时不写，因为还没用到)。记得加@submit.native.prevent。。。 -->
+    <!-- 全部绑定后，点击登录的时候监听表单的submit 
+      native表示监听el-from里原生表单的事件，prevent表示阻止表单的默认提交，不要跳转页面。执行的方法是login。 -->
+    <el-form
+      label-width="100px"
+      class="login-container"
+      @submit.native.prevent="login"
+    >
       <h3 class="login-title">系统登陆</h3>
       <el-form-item label="用户名">
         <el-col :span="20">
-          <el-input></el-input>
+          <el-input
+            v-model="model.username"
+            placeholder="请输入用户名"
+            clearable
+          ></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="密码">
         <el-col :span="20">
-          <el-input></el-input>
+          <el-input
+            :type="pwd"
+            v-model="model.password"
+            placeholder="请输入密码"
+            clearable
+          >
+            <!-- 注意下面是slot="xxx" 和 :class="icon" -->
+            <i slot="suffix" :class="icon" @click="changePwd"></i>
+          </el-input>
         </el-col>
       </el-form-item>
       <el-form-item class="login-bottom">
-        <el-button type="primary">登录</el-button>
-        <el-button>重置</el-button>
+        <!-- 记得加native-type="submit" -->
+        <el-button type="primary" native-type="submit">登录</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -25,7 +45,52 @@ export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Login",
   data() {
-    return {};
+    return {
+      model: {},
+      pwd: "password",
+      icon: "iconfont icon-eye-none",
+    };
+  },
+  methods: {
+    changePwd() {
+      if (this.pwd === "password") {
+        this.pwd = "text";
+        this.icon = "el-icon-view";
+      } else {
+        this.pwd = "password";
+        this.icon = "iconfont icon-eye-none";
+      }
+    },
+    // login方法  当我们点击登录后，需要请求一个接口
+    async login() {
+      // 【登录接口】 1. 请求这个数据完成，得到的应该是个token。后续我们会把token保存起来
+
+      // 3. post请求还要把当前的model传上去，因为里面包含了用户名和密码，因此把this.model当成第二个参数传给服务器。
+      // 然后到接口请求下面，就能看到username和password两个数据传上来了。并且这里传的密码是明文。
+      const res = await this.$http.post("login", this.model);
+      // 2. 暂时还是输出一下res.data。把服务端返回的数据log看一下。
+      // console.log(res.data);
+
+      /* 4. 下面是最简单的方法。这就表示把当前返回数据的token写入到localStorage里，是浏览器的一个存储，
+      在浏览器关闭之后，还能继续访问得到，下次再打开它也有的，只要保证是同一个网址域名就行。 */
+      localStorage.token = res.data.token;
+
+      // 如果希望浏览器关闭就没有的话，用sessionStorage。它表示的是当前浏览器关掉之后就没了
+      // sessionStorage.token = res.data.token
+
+      // 5. 设置完之后，跳转到首页
+      this.$router.push("/");
+
+      // 6. 最好用一个this的message去弹出一个信息，登录成功
+      this.$message({
+        type: "success",
+        message: "登录成功",
+      });
+    },
+    // 重置用户名和密码
+    reset() {
+      this.model = {};
+    },
   },
 };
 </script>
