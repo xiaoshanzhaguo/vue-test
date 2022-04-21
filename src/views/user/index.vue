@@ -111,11 +111,11 @@ export default {
     async save() {
       // 点击保存时，判断是添加还是编辑的保存
       let res;
-      console.log("save");
       if (this.operateType === "edit") {
         res = await this.$http.put(`users/${this.rowId}`, this.model);
         this.fetchList();
       } else {
+        console.log("liyuqiu");
         res = await this.$http.post("users", this.model); // !!!!
         this.fetchList();
       }
@@ -125,7 +125,7 @@ export default {
         message: "保存成功",
       });
       this.dialogVisible = false;
-      console.log(res);
+      console.log("res:" + JSON.stringify(res));
     },
     // 初始列表数据
     async fetchList() {
