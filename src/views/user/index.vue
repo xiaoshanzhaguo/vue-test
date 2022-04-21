@@ -41,6 +41,15 @@
             </el-input>
           </el-col>
         </el-form-item>
+        <el-form-item label="邮箱">
+          <el-col :span="20">
+            <el-input
+              v-model="model.email"
+              placeholder="请输入邮箱地址"
+              clearable
+            ></el-input>
+          </el-col>
+        </el-form-item>
         <el-form-item>
           <!-- !!!! -->
           <el-button @click="dialogVisible = false">取 消</el-button>
@@ -56,7 +65,7 @@
         width="180"
         align="center"
       ></el-table-column>
-      <el-table-column prop="password" label="密码" width="180" align="center">
+      <!-- <el-table-column prop="password" label="密码" width="180" align="center">
         <template slot-scope="scope">
           {{ scope.row.password_d }}
           <el-button
@@ -66,6 +75,8 @@
             ><i :class="scope.row.icon"></i
           ></el-button>
         </template>
+      </el-table-column> -->
+      <el-table-column prop="email" label="邮箱" width="180" align="center">
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center">
         <template slot-scope="scope">
