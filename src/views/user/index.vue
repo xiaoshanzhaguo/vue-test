@@ -122,21 +122,33 @@ export default {
     async save() {
       // 点击保存时，判断是添加还是编辑的保存
       let res;
+      let flag = false;
       if (this.operateType === "edit") {
         res = await this.$http.put(`users/${this.rowId}`, this.model);
-        this.fetchList();
+        flag = true;
       } else {
-        console.log("liyuqiu");
-        res = await this.$http.post("users", this.model); // !!!!
+        const username = this.model.username;
+        const res1 = await this.$http.get(`aUser/${username}`);
+        if (res1.data === "") {
+          res = await this.$http.post("users", this.model); // !!!!
+          flag = true;
+        } else {
+          this.$message({
+            type: "error",
+            message: "用户已存在",
+          });
+        }
+        console.log(res1);
+      }
+      if (flag) {
+        this.$message({
+          type: "success",
+          message: "保存成功",
+        });
+        this.dialogVisible = false;
         this.fetchList();
       }
-      //   this.$router.push("/users/list");
-      this.$message({
-        type: "success",
-        message: "保存成功",
-      });
-      this.dialogVisible = false;
-      console.log("res:" + JSON.stringify(res));
+      console.log(res);
     },
     // 初始列表数据
     async fetchList() {

@@ -6,9 +6,9 @@
     <el-form
       label-width="100px"
       class="login-container"
-      @submit.native.prevent="login"
+      @submit.native.prevent="register"
     >
-      <h3 class="login-title">后台管理系统</h3>
+      <h3 class="login-title">用户注册</h3>
       <el-form-item label="用户名">
         <el-col :span="20">
           <el-input
@@ -31,10 +31,19 @@
           </el-input>
         </el-col>
       </el-form-item>
+      <el-form-item label="邮箱">
+        <el-col :span="20">
+          <el-input
+            v-model="model.email"
+            placeholder="请输入邮箱地址"
+            clearable
+          ></el-input>
+        </el-col>
+      </el-form-item>
       <el-form-item class="login-bottom">
         <!-- 记得加native-type="submit" -->
-        <el-button type="primary" native-type="submit">登录</el-button>
-        <el-button @click="register">注册</el-button>
+        <el-button type="primary" native-type="submit">注册</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -43,7 +52,7 @@
 <script>
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
-  name: "Login",
+  name: "Register",
   data() {
     return {
       model: {},
@@ -61,34 +70,30 @@ export default {
         this.icon = "iconfont icon-eye-none";
       }
     },
-    // login方法  当我们点击登录后，需要请求一个接口
-    async login() {
-      // 【登录接口】 1. 请求这个数据完成，得到的应该是个token。后续我们会把token保存起来
-
-      // 3. post请求还要把当前的model传上去，因为里面包含了用户名和密码，因此把this.model当成第二个参数传给服务器。
-      // 然后到接口请求下面，就能看到username和password两个数据传上来了。并且这里传的密码是明文。
-      const res = await this.$http.post("login", this.model);
-      // 2. 暂时还是输出一下res.data。把服务端返回的数据log看一下。
-      // console.log(res.data);
-
-      /* 4. 下面是最简单的方法。这就表示把当前返回数据的token写入到localStorage里，是浏览器的一个存储，
-      在浏览器关闭之后，还能继续访问得到，下次再打开它也有的，只要保证是同一个网址域名就行。 */
-      localStorage.token = res.data.token;
-
-      // 如果希望浏览器关闭就没有的话，用sessionStorage。它表示的是当前浏览器关掉之后就没了
-      // sessionStorage.token = res.data.token
-
-      // 5. 设置完之后，跳转到首页
-      this.$router.push("/");
-
-      // 6. 最好用一个this的message去弹出一个信息，登录成功
-      this.$message({
-        type: "success",
-        message: "登录成功",
-      });
-    },
+    // 注册
     async register() {
-      await this.$router.push("/register");
+      const username = this.model.username;
+      const res = await this.$http.get(`aUser/${username}`);
+      if (res.data === "") {
+        const res1 = await this.$http.post("users", this.model);
+        // if (res.status);
+        if (res1.status == 200) {
+          this.$message({
+            type: "success",
+            message: "注册成功",
+          });
+          this.$router.push("/login");
+        }
+      } else {
+        this.$message({
+          type: "error",
+          message: "用户名已存在",
+        });
+      }
+    },
+    // 重置用户名和密码
+    reset() {
+      this.model = {};
     },
   },
 };

@@ -61,7 +61,8 @@ Vue.prototype.$http = http
 router.beforeEach((to, from, next) => {
   const token = localStorage.token
   // 拿到token后进行判断。如果token不存在并且它不是登录页，就不能让它登录系统
-  if (!token && to.name !== 'login') {
+  // 添加：判断要去的页面是否为登录
+  if (!token && to.name !== 'login' && to.name !== 'register') {
     next({
       name: 'login'
     })
