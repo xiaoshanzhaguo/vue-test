@@ -7,22 +7,25 @@
       label-width="100px"
       class="login-container"
       @submit.native.prevent="login"
+      :model="ruleForm"
+      :rules="rules"
+      ref="ruleForm"
     >
       <h3 class="login-title">后台管理系统</h3>
-      <el-form-item label="用户名">
+      <el-form-item label="用户名" prop="username">
         <el-col :span="20">
           <el-input
-            v-model="model.username"
+            v-model="ruleForm.username"
             placeholder="请输入用户名"
             clearable
           ></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="密码">
+      <el-form-item label="密码" prop="password">
         <el-col :span="20">
           <el-input
             :type="pwd"
-            v-model="model.password"
+            v-model="ruleForm.password"
             placeholder="请输入密码"
             clearable
           >
@@ -45,10 +48,35 @@ export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Login",
   data() {
+    var validateUsername = (rule, value, callback) => {
+      if (value === "") {
+        return callback(new Error("请输入用户名"));
+      } else {
+        callback();
+      }
+    };
+    var validatePassword = (rule, value, callback) => {
+      if (value === "") {
+        return callback(new Error("请输入密码"));
+      } else {
+        callback();
+      }
+    };
     return {
-      model: {},
+      ruleForm: {
+        username: "",
+        password: "",
+      },
       pwd: "password",
       icon: "iconfont icon-eye-none",
+      rules: {
+        username: [
+          { required: true, validator: validateUsername, trigger: "blur" },
+        ],
+        password: [
+          { required: true, validator: validatePassword, trigger: "blur" },
+        ],
+      },
     };
   },
   methods: {
@@ -67,25 +95,52 @@ export default {
 
       // 3. post请求还要把当前的model传上去，因为里面包含了用户名和密码，因此把this.model当成第二个参数传给服务器。
       // 然后到接口请求下面，就能看到username和password两个数据传上来了。并且这里传的密码是明文。
-      const res = await this.$http.post("login", this.model);
-      // 2. 暂时还是输出一下res.data。把服务端返回的数据log看一下。
-      // console.log(res.data);
 
-      /* 4. 下面是最简单的方法。这就表示把当前返回数据的token写入到localStorage里，是浏览器的一个存储，
+      // 增加数据校验
+      if (this.ruleForm.username === "") {
+        this.$message({
+          type: "error",
+          message: "请输入用户名！",
+        });
+      } else if (this.ruleForm.password === "") {
+        this.$message({
+          type: "error",
+          message: "请输入密码！",
+        });
+      } else {
+        const res = await this.$http.post("login", this.ruleForm);
+        const data = res.data;
+        if (data.userMessage === false) {
+          this.$message({
+            type: "error",
+            message: "用户名不存在！",
+          });
+        } else if (data.pwdMessage === false) {
+          this.$message({
+            type: "error",
+            message: "密码错误！",
+          });
+        } else {
+          // 2. 暂时还是输出一下res.data。把服务端返回的数据log看一下。
+          // console.log(res.data);
+
+          /* 4. 下面是最简单的方法。这就表示把当前返回数据的token写入到localStorage里，是浏览器的一个存储，
       在浏览器关闭之后，还能继续访问得到，下次再打开它也有的，只要保证是同一个网址域名就行。 */
-      localStorage.token = res.data.token;
+          localStorage.token = data.token;
 
-      // 如果希望浏览器关闭就没有的话，用sessionStorage。它表示的是当前浏览器关掉之后就没了
-      // sessionStorage.token = res.data.token
+          // 如果希望浏览器关闭就没有的话，用sessionStorage。它表示的是当前浏览器关掉之后就没了
+          // sessionStorage.token = res.data.token
 
-      // 5. 设置完之后，跳转到首页
-      this.$router.push("/");
+          // 5. 设置完之后，跳转到首页
+          this.$router.push("/");
 
-      // 6. 最好用一个this的message去弹出一个信息，登录成功
-      this.$message({
-        type: "success",
-        message: "登录成功",
-      });
+          // 6. 最好用一个this的message去弹出一个信息，登录成功
+          this.$message({
+            type: "success",
+            message: "登录成功",
+          });
+        }
+      }
     },
     async register() {
       await this.$router.push("/register");
