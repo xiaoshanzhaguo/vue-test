@@ -7,22 +7,26 @@
       label-width="100px"
       class="login-container"
       @submit.native.prevent="register"
+      :model="ruleForm"
+      :rules="rules"
+      ref="ruleForm"
     >
       <h3 class="login-title">用户注册</h3>
-      <el-form-item label="用户名">
+      <el-form-item label="用户名" prop="username">
         <el-col :span="20">
           <el-input
-            v-model="model.username"
+            v-model="ruleForm.username"
             placeholder="请输入用户名"
             clearable
+            @blur="userValidate"
           ></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="密码">
+      <el-form-item label="密码" prop="password">
         <el-col :span="20">
           <el-input
             :type="pwd"
-            v-model="model.password"
+            v-model="ruleForm.password"
             placeholder="请输入密码"
             clearable
           >
@@ -31,10 +35,10 @@
           </el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="邮箱">
+      <el-form-item label="邮箱" prop="email">
         <el-col :span="20">
           <el-input
-            v-model="model.email"
+            v-model="ruleForm.email"
             placeholder="请输入邮箱地址"
             clearable
           ></el-input>
@@ -55,7 +59,18 @@ export default {
   name: "Register",
   data() {
     return {
-      model: {},
+      ruleForm: {
+        username: "",
+        password: "",
+        email: "",
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        email: [{ required: true, message: "请输入邮箱地址", trigger: "blur" }],
+      },
       pwd: "password",
       icon: "iconfont icon-eye-none",
     };
@@ -72,28 +87,52 @@ export default {
     },
     // 注册
     async register() {
-      const username = this.model.username;
-      const res = await this.$http.get(`aUser/${username}`);
-      if (res.data === "") {
-        const res1 = await this.$http.post("users", this.model);
-        // if (res.status);
-        if (res1.status == 200) {
-          this.$message({
-            type: "success",
-            message: "注册成功",
-          });
-          this.$router.push("/login");
-        }
+      const form = this.ruleForm;
+      const username = form.username;
+      const password = form.password;
+      const email = form.email;
+      if (username === "" || password === "" || email === "") {
+        this.$message({
+          type: "error",
+          message: "请完善所有信息",
+        });
+      } else if (username !== "") {
+        this.userValidate();
       } else {
+        const res = await this.$http.get(`aUser/${username}`);
+
+        // 添加其他字段为空的校验
+        if (res.data === "") {
+          const res1 = await this.$http.post("users", this.ruleForm);
+          // if (res.status);
+          if (res1.status == 200) {
+            this.$message({
+              type: "success",
+              message: "注册成功",
+            });
+            this.$router.push("/login");
+          }
+        } else {
+          this.$message({
+            type: "error",
+            message: "注册失败",
+          });
+        }
+      }
+    },
+    // 重置数据
+    reset() {
+      this.ruleForm = {};
+    },
+    async userValidate() {
+      const username = this.ruleForm.username;
+      const res = await this.$http.get(`aUser/${username}`);
+      if (res.data !== "") {
         this.$message({
           type: "error",
           message: "用户名已存在",
         });
       }
-    },
-    // 重置用户名和密码
-    reset() {
-      this.model = {};
     },
   },
 };
